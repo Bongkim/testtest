@@ -1,0 +1,18 @@
+{% extends 'feeds/base.html' %}
+{% load static %}
+
+{% block content %}
+
+  <body>
+    <h1>수정</h1>
+    <form action="/feeds/{{feed.id}}/update/" method="POST">
+		{% comment %} 위의 경로는 action="/feeds/"과 같습니다 {% endcomment %}
+      {% csrf_token %}
+      <p>content</p>
+      <textarea name="content" rows="30" cols="50">{{feed.content}}</textarea> <br />
+      <input type="submit" value="submit" />
+    </form>
+  </body>
+</html>
+
+{% endblock content %}
