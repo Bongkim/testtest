@@ -4,8 +4,19 @@
   {% for feed in feeds %}
   <section class="feed">
     <div class="feed-header">
-      <img src="{% static 'feeds/images/profile.jpg' %}" alt="profile image" />
-      <div class="feed-title">{{ feed.author }}</div>
+      <div class="feed-header">
+        <img src="{% static 'feeds/images/profile.jpg' %}" alt="profile image"/>
+        <span class="feed-title">{{feed.author}}</span>
+        <a href="/accounts/{{feed.author.id}}/follow/">
+          {% if user.is_authenticated and feed.author != request.user %}
+          {% if feed.author.profile in request.user.profile.following.all %}
+          팔로잉
+          {% else %}
+          팔로우
+          {% endif %}
+          {% endif %}
+        </a>
+      </div>
     </div>
     <a href="/feeds/{{feed.id}}/">
       <img
@@ -32,17 +43,23 @@
       <a href="/feeds/{{ feed.id }}/delete/">삭제</a>
       <a href="/feeds/{{ feed.id }}/update/">수정</a>
       {% endif %}
-      <p>댓글이 n개 있습니다</p>
+      <a href="/feeds/{{feed.id}}/">댓글이 {{ feed.comment_set.count }}개 있습니다</a>
 
-      {% for comment in feed.comment_set.all %}
+      {% comment %} {% for comment in feed.comment_set.all %}
         <p>
           {{ comment.content }}
           {% if request.user == comment.author %}
           <a href="/feeds/{{feed.id}}/comments/{{comment.id}}/delete/">삭제</a>
           {% endif %}
         </p>
-      {% endfor %}
+      {% endfor %} {% endcomment %}
       
+      {% for comment in feed.comment_set.all|dictsortreversed:'like_users.count'|slice:':1' %}
+      <p>
+        {{comment.content}}
+      </p>
+      {% endfor %}
+
       {% if user.is_authenticated %}
       <form action="/feeds/{{feed.id}}/comments/" method="POST">
         {% csrf_token %}
