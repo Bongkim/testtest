@@ -1,5 +1,6 @@
 from django.shortcuts import redirect, render
 from .models import Feed, Comment
+from django.http import JsonResponse
 
 # Create your views here.
 def index(request):
@@ -34,7 +35,10 @@ def update(request, id):
 def create_comment(request, id):
     content = request.POST['content']
     Comment.objects.create(feed_id=id, content=content, author=request.user)
-    return redirect(f'/feeds/{id}/')
+    return JsonResponse({
+        "id": comment.id,
+        "content": content,
+    })
 
 def delete_comment(reqeust, id, cid):
     comment = Comment.objects.get(id=cid)
@@ -48,7 +52,10 @@ def like(request, id):
         feed.like_users.remove(request.user)
     else:
         feed.like_users.add(request.user)
-    return redirect (request.GET.get('next','/'))
+    # return redirect (request.GET.get('next','/'))
+    return JsonResponse({
+        'feedLikeCount': feed.like_set.count(), 
+    })
 
 def comment_like(request, id, comment_id):
     comment = Comment.objects.get(id=comment_id)
