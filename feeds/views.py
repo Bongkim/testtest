@@ -64,8 +64,10 @@ def comment_like(request, id, comment_id):
         comment.like_users.remove(request.user)
     else:
         comment.like_users.add(request.user)
-    return redirect(request.GET.get('next', '/'))
-
+    return JsonResponse({
+        'commentLikeCount': comment.commentlike_set.count(), 
+    })
+    
 def create_nested_comment(request, feed_id, comment_id):
     feed = Feed.objects.get(id=feed_id)
     comment = Comment.objects.get(id=comment_id)

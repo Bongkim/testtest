@@ -26,3 +26,19 @@ const onAddComment = async (feedId) => {
       `
     }
   }
+
+const onClickLikeButton = async (feedId) => {
+  const feedLikeButton = document.getElementById(`${feedId}-like-button`);
+  console.log(feedLikeButton);
+  const response = await axios.get(`/feeds/${feedId}/like/`);
+  console.log(response);
+  feedLikeButton.innerHTML = `${response.data.feedLikeCount} Likes`
+}
+
+const onClickCommentLikeButton = async (feedId, commentId) => {
+  const commentLikeButton = document.getElementById(`${commentId}-comment-like-button`);
+  console.log(commentLikeButton);
+  const response = await axios.get(`/feeds/${feedId}/comments/${commentId}/like/`);
+  console.log(response);
+  commentLikeButton.innerHTML = `${response.data.commentLikeCount} Likes`
+}

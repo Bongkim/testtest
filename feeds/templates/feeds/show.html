@@ -14,16 +14,17 @@
   <div class="feed-footer">
     <img class="buttons" src="{% static 'feeds/images/feed_buttons.png' %}" alt="feed buttons"/>
     {% if user.is_authenticated %}
-        <a href="/feeds/{{feed.id}}/like/?next={{request.path}}">
-          {{feed.like_users.count}} Likes
-        </a>
-      {% else %}
+      <a id="{{feed.id}}-like-button" onclick="onClickLikeButton({{feed.id}})">
+        {{feed.like_users.count}} Likes
+      </a>
+    {% else %}
         <div>{{feed.like_users.count}} Likes</div>
-      {% endif %}
+    {% endif %}
+
     <div class="feed-text">{{ feed.content }}</div>
     {% if request.user == feed.author %}
-    <a href="/feeds/{{ feed.id }}/delete/">삭제</a>
-    <a href="/feeds/{{ feed.id }}/update/">수정</a>
+      <a href="/feeds/{{ feed.id }}/delete/">삭제</a>
+      <a href="/feeds/{{ feed.id }}/update/">수정</a>
     {% endif %}
     <p>댓글이 {{ feed.comment_set.count }} 개 있습니다<p>
 
@@ -33,10 +34,11 @@
           <p>
             {{ comment.content }}
             {% if user.is_authenticated %}
-              <a href="/feeds/{{feed.id}}/comments/{{comment.id}}/like/?next={{request.path}}">
+            <a id="{{comment.id}}-comment-like-button" onclick="onClickCommentLikeButton({{feed.id}},{{comment.id}})">
+              {% comment %} <a href="/feeds/{{feed.id}}/comments/{{comment.id}}/like/?next={{request.path}}"> {% endcomment %}
                 {{ comment.like_users.count }} Likes
                 {% if user == comment.author %}
-                <a href="/feeds/{{feed.id}}/comments/{{comment.id}}/delete/">댓글 삭제</a>
+                  <a href="/feeds/{{feed.id}}/comments/{{comment.id}}/delete/">댓글 삭제</a>
                 {% endif %}
                 <a href="/feeds/{{feed.id}}/comments/{{comment.id}}/create/">대댓글 달기</a>
               </a>
